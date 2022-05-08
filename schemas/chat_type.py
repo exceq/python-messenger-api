@@ -2,6 +2,6 @@ from enum import Enum
 
 
 class ChatType(Enum):
-    group: "group"
-    private: "private"
-    public: "public"
+    group = 1
+    private = 2
+    public = 3

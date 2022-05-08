@@ -1,44 +1,39 @@
-from datetime import datetime
+from sqlalchemy.orm import Session
 
-from schemas.chat import ChatModel, Chat
-from schemas.chat_response import ChatResponse
-from schemas.chat_type import ChatType
-from schemas.chat_user import ChatUser
-import crud.message as message_repository
-
-chat_database = [
-    Chat(id=1, created=datetime(2022, 4, 20, 0, 0, 0), chat_type=ChatType.private)
-]
-
-chat_user_chat_database = [
-    ChatUser(user_id=1, chat_id=1),
-    ChatUser(user_id=2, chat_id=1)
-]
+from core.db.models import Chat
+from schemas.chat import ChatModel
+import crud.user as user_repository
 
 
-def create(user_id: int, chat_model: ChatModel):
-    chat = Chat(id=len(chat_database) + 1, created=datetime.now, **chat_model.dict())
-    chat_database.append(chat)
+def create(chat_model: ChatModel, db: Session):
+    chat_db = Chat(**chat_model.dict())
+    chat_db.users = [user_repository.find_by_id(chat_model.creator_user_id, db=db)]
+    db.add(chat_db)
+    db.commit()
+    return chat_db
 
-    chat_user = ChatUser(user_id=user_id, chat_id=chat.id)
-    chat_user_chat_database.append(chat_user)
 
+def find_by_id(chat_id: int, db: Session):
+    return db.query(Chat).filter_by(id=chat_id).one_or_none()
+
+
+def delete(chat_id: int, db: Session):
+    deleted = db.query(Chat).filter_by(id=chat_id).delete()
+    db.commit()
+    return deleted
+
+
+def update(chat_id: int, chat_model: ChatModel, db: Session):
+    chat = db.query(Chat).filter_by(id=chat_id).one_or_none()
+    for k, v in chat_model.dict().items():
+        setattr(chat, k, v)
+    db.commit()
     return chat
 
 
-def get(chat_id: int):
-
-
-    resp = ChatResponse()
-
-    return chat_database[user_id - 1]
-
-
-def delete(user_id: int):
-    return 1
-
-
-def update(user_id: int, user_model: User):
-    user = get(user_id)
-    for k, v in user_model.dict().values():
-        user[k] = v
+def add_user_to_chat(chat_id: int, user_id: int, db: Session):
+    chat = find_by_id(chat_id=chat_id, db=db)
+    user = user_repository.find_by_id(user_id=user_id, db=db)
+    chat.users += [user]
+    db.commit()
+    return chat

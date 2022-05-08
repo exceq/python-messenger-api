@@ -1,6 +1,6 @@
 from datetime import datetime
-
 from pydantic import BaseModel
+from schemas.user_status import UserStatus
 
 
 class UserModel(BaseModel):
@@ -11,6 +11,10 @@ class UserModel(BaseModel):
 
 class User(UserModel):
     id: int
-    active: bool
-    updated: datetime
+    status: UserStatus
+    updated: datetime = None
     created: datetime
+    chats: list
+
+    class Config:
+        orm_mode = True
