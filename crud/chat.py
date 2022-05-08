@@ -2,7 +2,6 @@ from sqlalchemy.orm import Session
 
 from core.db.models import Chat
 from crud.crud_repository import Crud
-from schemas.chat import ChatModel
 from crud.user import UserRepository
 
 user_repository = UserRepository()

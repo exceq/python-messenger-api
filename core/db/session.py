@@ -12,5 +12,5 @@ DB_NAME = getenv("DB_NAME")
 DB_PORT = getenv("DB_PORT")
 
 db_url = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{DB_PORT}/{DB_NAME}"
-engine = create_engine(db_url)
+engine = create_engine(db_url, echo='debug')
 session = sessionmaker(engine)

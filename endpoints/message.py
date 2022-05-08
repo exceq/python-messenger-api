@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
@@ -37,3 +39,10 @@ async def delete_message(message_id: int, db=Depends(get_db)):
     """Удалить сообщение по message_id"""
     message = message_repository.delete(id=message_id, db=db)
     return message
+
+
+@router.get('/{chat_id}/last_messages', response_model=List[Message])
+async def get_last_messages(chat_id: int, db=Depends(get_db), offset: int = 0, limit: int = 20):
+    """Получить сообщения чата начиная с offset """
+    messages = message_repository.get_last_messages(chat_id=chat_id, db=db, offset=offset, limit=limit)
+    return messages
