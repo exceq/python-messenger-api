@@ -36,3 +36,13 @@ class Chat(Base):
     created = Column(DateTime(), server_default=func.now())
     updated = Column(DateTime(), server_default=func.now(), onupdate=func.now())
     users = relationship('User', secondary=chat_user, back_populates='chats')
+
+
+class Message(Base):
+    __tablename__ = 'messages'
+    id = Column(Integer, primary_key=True, index=True)
+    text = Column(String(1024), nullable=False)
+    created = Column(DateTime(), server_default=func.now())
+    updated = Column(DateTime(), server_default=func.now(), onupdate=func.now())
+    user_id = Column(Integer, ForeignKey('users.id'))
+    chat_id = Column(Integer, ForeignKey('chats.id', ondelete="CASCADE"))

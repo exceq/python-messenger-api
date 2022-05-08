@@ -1,28 +1,10 @@
-from schemas.message import MessageModel, Message
-from datetime import datetime
-
-message_database = []
+from core.db.models import Message
+from crud.crud_repository import Crud
 
 
-def create(message_model: MessageModel):
-    new_message = Message(id=len(message_database) + 1, created=datetime.now(), **message_model.dict())
-    message_database.append(new_message)
-    return new_message
-
-
-def get(message_id: int):
-    return message_database[message_id - 1]
-
-
-def delete(message_id: int):
-    return 1
-
-
-def update(message_id: int, message_model: MessageModel):
-    message = get(message_id)
-    message.updated = datetime.now()
-    message.text = message_model.text
-    return message
+class MessageRepository(Crud):
+    def __init__(self):
+        super().__init__(Message)
 
 
 def get_all_byq_chat_id(chat_id: int):

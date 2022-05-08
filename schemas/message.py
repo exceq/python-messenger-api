@@ -13,3 +13,6 @@ class Message(MessageModel):
     id: int
     created: datetime
     updated: datetime
+
+    class Config:
+        orm_mode = True
