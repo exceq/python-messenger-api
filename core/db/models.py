@@ -19,7 +19,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(256))
     login = Column(String(256), unique=True, nullable=False)
-    password = Column(String(256))
+    hashed_password = Column(String(256))
     status = Column(Enum(UserStatus), default=UserStatus.active)
     created = Column(DateTime(), server_default=func.now())
     updated = Column(DateTime(), server_default=func.now(), onupdate=func.now())

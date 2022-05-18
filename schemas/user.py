@@ -5,8 +5,11 @@ from schemas.user_status import UserStatus
 
 class UserModel(BaseModel):
     login: str
-    password: str
     name: str
+
+
+class UserModelCreate(UserModel):
+    password: str
 
 
 class User(UserModel):
