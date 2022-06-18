@@ -8,6 +8,8 @@ from endpoints.message import router as message_router
 from endpoints.user import router as user_router
 from endpoints.login import router as login_router
 
+from core.broker.celery import app as celery_app
+
 app = FastAPI()
 
 app.include_router(user_router, prefix='/user', tags=['User'])
@@ -19,6 +21,11 @@ app.include_router(login_router, prefix='/login', tags=['Login'])
 @app.get('/')
 async def hello():
     return {'message': 'Hello world!'}
+
+
+@app.get('/task')
+async def create_task():
+    celery_app.send_task(name='test_task')
 
 
 if __name__ == '__main__':

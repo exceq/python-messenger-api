@@ -9,6 +9,10 @@ class MessageModel(BaseModel):
     text: str
 
 
+class MessageModelAsync(MessageModel):
+    send_datetime: datetime = datetime.now()
+
+
 class Message(MessageModel):
     id: int
     created: datetime

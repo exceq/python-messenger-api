@@ -9,6 +9,13 @@ class UserRepository(Crud):
     def __init__(self):
         super().__init__(User)
 
+    def create_from_model(self, db: Session, **model_params):
+        print(model_params)
+        if 'password' in model_params and 'hashed_password' not in model_params:
+            model_params['hashed_password'] = security.get_password_hash(model_params['password'])
+            model_params.pop('password')
+        return super(UserRepository, self).create(db=db, entity=model_params)
+
     def authenticate(self, login: str, password: str, db: Session):
         user = self.find_by_login(login=login, db=db)
         if not user:

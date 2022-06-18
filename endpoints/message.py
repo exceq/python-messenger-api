@@ -1,11 +1,13 @@
 from typing import List
 
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
+from core.broker.celery import app as celery_app
 from crud.message import MessageRepository
 from deps import get_db
-from schemas.message import Message, MessageModel
+from schemas.message import Message, MessageModel, MessageModelAsync
 
 router = APIRouter()
 message_repository = MessageRepository()
@@ -23,7 +25,7 @@ async def get_message(message_id: int, db=Depends(get_db)):
 @router.post('/', response_model=Message)
 async def create_message(message_model: MessageModel, db=Depends(get_db)):
     """Создать сообщение по message_id"""
-    message = message_repository.create(db=db, **message_model.dict())
+    message = message_repository.create(db=db, entity=message_model)
     return message
 
 
@@ -46,3 +48,10 @@ async def get_last_messages(chat_id: int, db=Depends(get_db), offset: int = 0, l
     """Получить сообщения чата начиная с offset """
     messages = message_repository.get_last_messages(chat_id=chat_id, db=db, offset=offset, limit=limit)
     return messages
+
+
+@router.post('/async', response_model=Message)
+async def create_message_async(model: MessageModelAsync):
+    """Получить сообщения чата начиная с offset """
+    celery_app.apply_async(name='send_async', eta=model.send_datetime, args=model)
+    return 1

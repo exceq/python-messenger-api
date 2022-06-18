@@ -21,7 +21,7 @@ async def get_chat(chat_id: int, db=Depends(get_db)):
 @router.post('/', response_model=Chat)
 async def create_chat(chat_model: ChatModel, db=Depends(get_db)):
     """Создать чат"""
-    return chat_repository.create(db=db, **chat_model.dict())
+    return chat_repository.create_from_model(db=db, chat_model=chat_model)
 
 
 @router.put('/{chat_id}', response_model=Chat)

@@ -8,9 +8,9 @@ load_dotenv()
 
 POSTGRES_USER = getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = getenv("POSTGRES_PASSWORD")
-DB_NAME = getenv("DB_NAME")
+POSTGRES_DB = getenv("POSTGRES_DB")
 DB_PORT = getenv("DB_PORT")
 
-db_url = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{DB_PORT}/{DB_NAME}"
+db_url = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@localhost:{DB_PORT}/{POSTGRES_DB}"
 engine = create_engine(db_url, echo='debug')
 session = sessionmaker(engine)

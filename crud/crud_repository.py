@@ -5,11 +5,14 @@ class Crud:
     def __init__(self, entity: type):
         self.clazz: type = entity
 
-    def create(self, db: Session, **model_params):
+    def _create(self, db: Session, **model_params):
         _entity = self.clazz(**model_params)
         db.add(_entity)
         db.commit()
         return _entity
+
+    def create(self, db: Session, entity):
+        return self._create(db, **entity.dict())
 
     def find_by_id(self, id: int, db: Session):
         return db.query(self.clazz).filter_by(id=id).one_or_none()

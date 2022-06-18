@@ -25,10 +25,8 @@ async def get_user(user_id: int = Depends(get_current_user), db=Depends(get_db))
 async def create_user(user_model_create: UserModelCreate, db=Depends(get_db)):
     """Создать пользователя"""
     hashed_password = security.get_password_hash(user_model_create.password)
-    model = user_model_create.dict()
-    model.pop('password', None)
-    model['hashed_password'] = hashed_password
-    return user_repository.create(db=db, **model)
+    user_model_create.password = hashed_password
+    return user_repository.create(db=db, entity=user_model_create)
 
 
 @router.put('/', response_model=User)

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from core.db.models import Chat
 from crud.crud_repository import Crud
 from crud.user import UserRepository
+from schemas.chat import ChatModel
 
 user_repository = UserRepository()
 
@@ -11,9 +12,9 @@ class ChatRepository(Crud):
     def __init__(self):
         super().__init__(Chat)
 
-    def create(self, db: Session, **model_params):
-        chat_db = Chat(**model_params)
-        chat_db.users = [user_repository.find_by_id(model_params['creator_user_id'], db=db)]
+    def create_from_model(self, db: Session, chat_model: ChatModel):
+        chat_db = Chat(**chat_model.dict())
+        chat_db.users = [user_repository.find_by_id(chat_model.creator_user_id, db=db)]
         db.add(chat_db)
         db.commit()
         return chat_db
