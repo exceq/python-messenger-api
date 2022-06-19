@@ -12,9 +12,10 @@ class ChatRepository(Crud):
     def __init__(self):
         super().__init__(Chat)
 
-    def create_from_model(self, db: Session, chat_model: ChatModel):
+    def create_chat(self, db: Session, chat_model: ChatModel, creator_user_id: int):
         chat_db = Chat(**chat_model.dict())
-        chat_db.users = [user_repository.find_by_id(chat_model.creator_user_id, db=db)]
+        chat_db.creator_user_id = creator_user_id
+        chat_db.users = [user_repository.find_by_id(creator_user_id, db=db)]
         db.add(chat_db)
         db.commit()
         return chat_db

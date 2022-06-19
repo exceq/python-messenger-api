@@ -14,6 +14,9 @@ class Crud:
     def create(self, db: Session, entity):
         return self._create(db, **entity.dict())
 
+    def create(self, db: Session, **kwargs):
+        return self._create(db, **kwargs)
+
     def find_by_id(self, id: int, db: Session):
         return db.query(self.clazz).filter_by(id=id).one_or_none()
 

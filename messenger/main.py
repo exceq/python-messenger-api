@@ -1,14 +1,15 @@
 import uvicorn
+
 from fastapi import FastAPI
 
+from core.broker.celery import celery_app
 from core.db.models import Base
 from core.db.session import engine
 from endpoints.chat import router as chat_router
+from endpoints.login import router as login_router
 from endpoints.message import router as message_router
 from endpoints.user import router as user_router
-from endpoints.login import router as login_router
-
-from core.broker.celery import app as celery_app
+from security import get_password_hash
 
 app = FastAPI()
 
@@ -20,7 +21,7 @@ app.include_router(login_router, prefix='/login', tags=['Login'])
 
 @app.get('/')
 async def hello():
-    return {'message': 'Hello world!'}
+    return {'message': get_password_hash("user2")}
 
 
 @app.get('/task')
@@ -30,4 +31,4 @@ async def create_task():
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
-    uvicorn.run('main:app', host='0.0.0.0', port=8080, reload=True)
+    uvicorn.run('main:app', host='0.0.0.0', port=8080, reload=True, log_level="info")

@@ -1,5 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
-from starlette import status
+import logging
+
+from fastapi import APIRouter, Depends
 
 import security
 from crud.user import UserRepository
@@ -24,9 +25,7 @@ async def get_user(user_id: int = Depends(get_current_user), db=Depends(get_db))
 @router.post('/', response_model=User)
 async def create_user(user_model_create: UserModelCreate, db=Depends(get_db)):
     """Создать пользователя"""
-    hashed_password = security.get_password_hash(user_model_create.password)
-    user_model_create.password = hashed_password
-    return user_repository.create(db=db, entity=user_model_create)
+    return user_repository.create_from_model(db=db, model=user_model_create)
 
 
 @router.put('/', response_model=User)

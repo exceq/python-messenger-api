@@ -7,7 +7,6 @@ from schemas.chat_type import ChatType
 
 
 class ChatModel(BaseModel):
-    creator_user_id: int
     title: str
     description: Optional[str] = None
     chat_type: ChatType
@@ -15,6 +14,7 @@ class ChatModel(BaseModel):
 
 class Chat(ChatModel):
     id: int
+    creator_user_id: int
     created: datetime
     updated: datetime
     users: list
