@@ -1,7 +1,8 @@
 from sqlalchemy.orm import Session
 
-from core.db.models import Chat
+from core.db.models import Chat, User, Message
 from crud.crud_repository import Crud
+from crud.message import MessageRepository
 from crud.user import UserRepository
 from schemas.chat import ChatModel
 
@@ -26,3 +27,12 @@ class ChatRepository(Crud):
         chat.users += [user]
         db.commit()
         return chat
+
+    def get_last_active_chats(self, user_id: int, db: Session):
+        user: User = UserRepository().find_by_id(id=user_id, db=db)
+
+        messages = [MessageRepository().get_last_messages(chat_id=chat.id, db=db, limit=1)[0] for chat in user.chats]
+        messages.sort(key=lambda x: x.created, reverse=True)
+
+        chats = list(map(lambda m: db.query(Chat).filter_by(id=m.chat_id).one(), messages))
+        return chats
