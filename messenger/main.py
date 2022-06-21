@@ -9,6 +9,7 @@ from endpoints.chat import router as chat_router
 from endpoints.login import router as login_router
 from endpoints.message import router as message_router
 from endpoints.user import router as user_router
+from endpoints.utils import router as utils_router
 from security import get_password_hash
 
 app = FastAPI()
@@ -17,6 +18,7 @@ app.include_router(user_router, prefix='/user', tags=['User'])
 app.include_router(chat_router, prefix='/chat', tags=['Chat'])
 app.include_router(message_router, prefix='/message', tags=['Message'])
 app.include_router(login_router, prefix='/login', tags=['Login'])
+app.include_router(utils_router, prefix='/utils', tags=['Utils'])
 
 
 @app.get('/')

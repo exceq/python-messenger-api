@@ -1,13 +1,9 @@
 from celery.utils.log import get_task_logger
-from fastapi import Depends
-from sqlalchemy.orm import Session
 
 from core.broker.celery import celery_app
 from core.db.session import session
 from crud.message import MessageRepository
 from crud.user import UserRepository
-from deps import get_db
-from schemas.message import MessageModel
 
 user_repository = UserRepository()
 message_repository = MessageRepository()

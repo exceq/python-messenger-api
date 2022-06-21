@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from starlette import status
@@ -17,6 +19,7 @@ def get_db():
 
 
 async def get_current_user(token: str = Depends(oauth2_scheme)):
+    logging.error(f"JWT TOKEN: {token}")
     user_id = security.get_user_from_jwt(token)
     if user_id:
         return user_id
