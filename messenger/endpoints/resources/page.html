@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <h2>Chat ID: <span id="ws-id"></span></h2>
+        <form action="" onsubmit="connectToChat(event)">
+            <input type="text" id="chat_id" autocomplete="off"/>
+            <button>Connect</button>
+        </form>
+        <br>
+        <form action="" onsubmit="sendMessage(event)">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+            let ws;
+            let user_id;
+            let xhr = new XMLHttpRequest();
+            let body = 'username=user&password=user';
+            xhr.open("POST", '/login/token', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send(body);
+            xhr.onreadystatechange = function() { 
+                console.log(this.responseText);
+                if (this.readyState !== 4) return;
+            
+                var resp = JSON.parse(this.response);
+                localStorage.setItem("jwttoken", resp['access_token']);
+            }
+            function connectToChat(event) {
+                let chat_id = document.getElementById("chat_id").value;
+                
+                document.querySelector("#ws-id").textContent = chat_id;
+                ws = new WebSocket(`ws://localhost:8080/utils/ws/${chat_id}`);
+                ws.onmessage = function(event) {
+                    console.log(event.data);
+                    var messages = document.getElementById('messages');
+                    var message = document.createElement('li');
+                    var content = document.createTextNode(event.data);
+                    message.appendChild(content);
+                    messages.appendChild(message);
+                };
+
+                event.preventDefault();
+            }
+            function sendMessage(event)
+            {
+                try {
+                    let chat_id = document.getElementById("chat_id").value;
+                    let input = document.getElementById("messageText");
+                    let xmlHttp = new XMLHttpRequest();
+                    xmlHttp.open("GET", `/utils/ws-pubsub?chat_id=${chat_id}&text=${input.value}`, true); // true for asynchronous
+                    xmlHttp.setRequestHeader('Authorization', `Bearer ${localStorage.getItem("jwttoken")}`);
+                    xmlHttp.send();
+                    input.value = '';
+                } catch (err) {                
+                  console.log(err);                
+                }
+                event.preventDefault();
+            }
+        </script>
+    </body>
+</html>
